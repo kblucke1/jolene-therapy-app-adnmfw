@@ -23,11 +23,17 @@ export default function ImageUploader({
   const containerStyle = isLogo ? styles.logoContainer : styles.avatarContainer;
   const imageStyle = isLogo ? styles.logoImage : styles.avatarImage;
 
+  console.log('ImageUploader render:', { imageUrl, loading, type, size });
+
   return (
     <TouchableOpacity 
       style={[containerStyle, { width: size, height: isLogo ? size * 0.6 : size }]}
-      onPress={onPress}
+      onPress={() => {
+        console.log('ImageUploader pressed:', type);
+        onPress();
+      }}
       disabled={loading}
+      activeOpacity={0.7}
     >
       {loading ? (
         <View style={styles.loadingContainer}>
@@ -36,7 +42,12 @@ export default function ImageUploader({
         </View>
       ) : imageUrl ? (
         <View style={styles.imageWrapper}>
-          <Image source={{ uri: imageUrl }} style={imageStyle} />
+          <Image 
+            source={{ uri: imageUrl }} 
+            style={imageStyle}
+            onLoad={() => console.log('Image loaded successfully:', imageUrl)}
+            onError={(error) => console.error('Image load error:', error)}
+          />
           <View style={styles.editOverlay}>
             <Icon name="camera-outline" size={20} color={colors.backgroundAlt} />
           </View>

@@ -32,10 +32,12 @@ export default function AdminProfileScreen() {
   };
 
   const handleLogoUpload = () => {
+    console.log('Logo upload button pressed');
     pickImage('logo');
   };
 
   const handleAvatarUpload = () => {
+    console.log('Avatar upload button pressed');
     pickImage('avatar');
   };
 
@@ -44,9 +46,17 @@ export default function AdminProfileScreen() {
       title: 'Practice Management',
       items: [
         { icon: 'business-outline', label: 'Practice Settings', onPress: () => console.log('Practice Settings') },
-        { icon: 'people-outline', label: 'Client Management', onPress: () => console.log('Client Management') },
-        { icon: 'document-text-outline', label: 'Templates & Resources', onPress: () => console.log('Templates') },
-        { icon: 'analytics-outline', label: 'Reports & Analytics', onPress: () => console.log('Reports') },
+        { icon: 'people-outline', label: 'Client Management', onPress: () => router.push('/admin') },
+        { icon: 'clipboard-outline', label: 'Task Management', onPress: () => router.push('/admin/tasks') },
+        { icon: 'analytics-outline', label: 'Reports & Analytics', onPress: () => router.push('/admin/analytics') },
+      ]
+    },
+    {
+      title: 'Content Management',
+      items: [
+        { icon: 'play-circle-outline', label: 'Meditation Videos', onPress: () => router.push('/admin/videos') },
+        { icon: 'fitness-outline', label: 'Physical Exercises', onPress: () => router.push('/admin/exercises') },
+        { icon: 'document-text-outline', label: 'Documents & PDFs', onPress: () => router.push('/admin/documents') },
       ]
     },
     {
@@ -91,11 +101,14 @@ export default function AdminProfileScreen() {
       <ScrollView style={commonStyles.content} showsVerticalScrollIndicator={false}>
         <Text style={commonStyles.title}>Admin Profile</Text>
         
-        {/* Practice Logo Section */}
+        {/* Practice Logo Section - Made more prominent */}
         <View style={styles.logoSection}>
-          <Text style={styles.sectionTitle}>Practice Logo</Text>
+          <View style={styles.logoHeader}>
+            <Icon name="business-outline" size={24} color={colors.primary} />
+            <Text style={styles.sectionTitle}>Practice Logo</Text>
+          </View>
           <Text style={styles.sectionSubtitle}>
-            Upload your practice logo to personalize the app for your clients
+            Upload your practice logo to personalize the app for your clients. This will appear throughout the client experience.
           </Text>
           <View style={styles.logoUploadContainer}>
             <ImageUploader
@@ -103,8 +116,17 @@ export default function AdminProfileScreen() {
               onPress={handleLogoUpload}
               loading={uploading}
               type="logo"
-              size={200}
+              size={240}
             />
+            {!profile?.logo_url && !uploading && (
+              <TouchableOpacity 
+                style={styles.uploadButton}
+                onPress={handleLogoUpload}
+              >
+                <Icon name="cloud-upload-outline" size={20} color={colors.backgroundAlt} />
+                <Text style={styles.uploadButtonText}>Upload Logo</Text>
+              </TouchableOpacity>
+            )}
           </View>
         </View>
         
@@ -149,17 +171,26 @@ export default function AdminProfileScreen() {
         <View style={styles.quickActionsContainer}>
           <Text style={styles.sectionTitle}>Quick Actions</Text>
           <View style={styles.quickActionsGrid}>
-            <TouchableOpacity style={styles.quickActionCard}>
+            <TouchableOpacity 
+              style={styles.quickActionCard}
+              onPress={() => router.push('/admin')}
+            >
               <Icon name="person-add-outline" size={32} color={colors.primary} />
               <Text style={styles.quickActionText}>Add Client</Text>
             </TouchableOpacity>
             
-            <TouchableOpacity style={styles.quickActionCard}>
+            <TouchableOpacity 
+              style={styles.quickActionCard}
+              onPress={() => router.push('/admin/tasks')}
+            >
               <Icon name="clipboard-outline" size={32} color={colors.secondary} />
               <Text style={styles.quickActionText}>Assign Task</Text>
             </TouchableOpacity>
             
-            <TouchableOpacity style={styles.quickActionCard}>
+            <TouchableOpacity 
+              style={styles.quickActionCard}
+              onPress={() => router.push('/admin/analytics')}
+            >
               <Icon name="bar-chart-outline" size={32} color={colors.accent} />
               <Text style={styles.quickActionText}>View Reports</Text>
             </TouchableOpacity>
@@ -227,15 +258,37 @@ export default function AdminProfileScreen() {
 const styles = StyleSheet.create({
   logoSection: {
     backgroundColor: colors.card,
-    borderRadius: 12,
-    padding: 20,
+    borderRadius: 16,
+    padding: 24,
     marginBottom: 24,
-    boxShadow: `0px 2px 8px ${colors.shadow}`,
-    elevation: 3,
+    boxShadow: `0px 4px 12px ${colors.shadow}`,
+    elevation: 4,
+    borderWidth: 1,
+    borderColor: colors.primary + '20',
+  },
+  logoHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
   },
   logoUploadContainer: {
     alignItems: 'center',
+    marginTop: 20,
+  },
+  uploadButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.primary,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 8,
     marginTop: 16,
+  },
+  uploadButtonText: {
+    color: colors.backgroundAlt,
+    fontWeight: '600',
+    marginLeft: 8,
+    fontSize: 16,
   },
   adminCard: {
     backgroundColor: colors.card,

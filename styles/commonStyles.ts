@@ -2,25 +2,31 @@
 import { StyleSheet } from 'react-native';
 
 export const colors = {
-  // Primary brand colors
+  // Primary brand colors - using user's requested colors
   primary: '#5d554f',
   secondary: '#8B7355',
+  accent: '#9C8B7A',
   
-  // Background colors
+  // Background colors - using user's requested colors
   background: '#e7ddc3',
+  backgroundAlt: '#f5f1e8',
   surface: '#f5f1e8',
+  card: '#ffffff',
   
   // Text colors
   text: '#2c2c2c',
+  textLight: '#666666',
   textSecondary: '#666666',
   
   // UI colors
   border: '#d4c4a8',
+  shadow: 'rgba(44, 44, 44, 0.1)',
   
   // Status colors
   success: '#4CAF50',
   warning: '#FF9800',
   error: '#F44336',
+  danger: '#F44336',
   info: '#2196F3',
   
   // Additional colors for task types
@@ -37,6 +43,10 @@ export const commonStyles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
+  content: {
+    flex: 1,
+    padding: 20,
+  },
   safeArea: {
     flex: 1,
     backgroundColor: colors.background,
@@ -48,20 +58,14 @@ export const commonStyles = StyleSheet.create({
     padding: 20,
   },
   card: {
-    backgroundColor: colors.surface,
+    backgroundColor: colors.card,
     borderRadius: 12,
     padding: 16,
     marginVertical: 8,
     marginHorizontal: 20,
     borderWidth: 1,
     borderColor: colors.border,
-    shadowColor: colors.text,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    boxShadow: `0px 2px 8px ${colors.shadow}`,
     elevation: 3,
   },
   title: {
@@ -93,7 +97,7 @@ export const commonStyles = StyleSheet.create({
     padding: 12,
     fontSize: 16,
     color: colors.text,
-    backgroundColor: colors.surface,
+    backgroundColor: colors.card,
   },
   inputFocused: {
     borderColor: colors.primary,
@@ -104,13 +108,7 @@ export const commonStyles = StyleSheet.create({
     marginVertical: 16,
   },
   shadow: {
-    shadowColor: colors.text,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    boxShadow: `0px 2px 8px ${colors.shadow}`,
     elevation: 3,
   },
 });
@@ -125,7 +123,7 @@ export const buttonStyles = StyleSheet.create({
     justifyContent: 'center',
   },
   primaryText: {
-    color: colors.surface,
+    color: colors.backgroundAlt,
     fontSize: 16,
     fontWeight: '600',
   },
