@@ -1,117 +1,241 @@
 
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { Client } from '../types';
-import { colors, commonStyles } from '../styles/commonStyles';
 import Icon from './Icon';
+import { colors, commonStyles } from '../styles/commonStyles';
+import { Client } from '../types';
 
 interface ClientCardProps {
   client: Client;
+  taskStats: {
+    completed: number;
+    total: number;
+    pending: number;
+  };
   onPress: () => void;
-  taskCount?: number;
+  onEdit?: () => void;
+  onDelete?: () => void;
 }
 
-const ClientCard: React.FC<ClientCardProps> = ({ client, onPress, taskCount = 0 }) => {
-  return (
-    <TouchableOpacity style={[commonStyles.card, styles.container]} onPress={onPress}>
-      <View style={styles.header}>
-        <View style={styles.avatarContainer}>
-          <Icon name="person-circle-outline" size={40} color={colors.primary} />
-        </View>
-        <View style={styles.infoContainer}>
-          <Text style={styles.name}>{client.name}</Text>
-          <Text style={styles.email}>{client.email}</Text>
-          <Text style={styles.joinDate}>
-            Joined: {new Date(client.createdAt).toLocaleDateString()}
-          </Text>
-        </View>
-        <View style={styles.statsContainer}>
-          <View style={styles.taskBadge}>
-            <Text style={styles.taskCount}>{taskCount}</Text>
-            <Text style={styles.taskLabel}>Tasks</Text>
-          </View>
-        </View>
-      </View>
-      
-      {client.therapistNotes && (
-        <View style={styles.notesContainer}>
-          <Text style={styles.notesLabel}>Notes:</Text>
-          <Text style={styles.notes} numberOfLines={2}>
-            {client.therapistNotes}
-          </Text>
-        </View>
-      )}
-    </TouchableOpacity>
-  );
-};
-
 const styles = StyleSheet.create({
-  container: {
-    marginHorizontal: 0,
+  card: {
+    backgroundColor: colors.surface,
+    marginHorizontal: 20,
+    marginVertical: 8,
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
-  header: {
+  cardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginBottom: 12,
   },
-  avatarContainer: {
+  avatar: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: colors.primary + '20',
+    justifyContent: 'center',
+    alignItems: 'center',
     marginRight: 12,
   },
-  infoContainer: {
+  avatarText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: colors.primary,
+  },
+  clientInfo: {
     flex: 1,
   },
-  name: {
-    fontSize: 16,
+  clientName: {
+    fontSize: 18,
     fontWeight: '600',
     color: colors.text,
     marginBottom: 2,
   },
-  email: {
+  clientEmail: {
     fontSize: 14,
-    color: colors.textLight,
+    color: colors.textSecondary,
+  },
+  taskStats: {
+    flexDirection: 'row',
+    marginBottom: 12,
+    gap: 16,
+  },
+  statItem: {
+    alignItems: 'center',
+  },
+  statNumber: {
+    fontSize: 16,
+    fontWeight: 'bold',
     marginBottom: 2,
   },
-  joinDate: {
+  statLabel: {
     fontSize: 12,
-    color: colors.textLight,
+    color: colors.textSecondary,
   },
-  statsContainer: {
-    alignItems: 'center',
+  progressBar: {
+    height: 4,
+    backgroundColor: colors.border,
+    borderRadius: 2,
+    marginBottom: 12,
+    overflow: 'hidden',
   },
-  taskBadge: {
-    backgroundColor: colors.primary,
-    borderRadius: 20,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    alignItems: 'center',
-    minWidth: 50,
+  progressFill: {
+    height: '100%',
+    backgroundColor: colors.success,
+    borderRadius: 2,
   },
-  taskCount: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: colors.backgroundAlt,
-  },
-  taskLabel: {
-    fontSize: 10,
-    color: colors.backgroundAlt,
-    marginTop: 2,
-  },
-  notesContainer: {
-    marginTop: 12,
-    paddingTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
-  },
-  notesLabel: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: colors.textLight,
-    marginBottom: 4,
-  },
-  notes: {
+  therapistNotes: {
     fontSize: 14,
-    color: colors.text,
-    lineHeight: 20,
+    color: colors.textSecondary,
+    fontStyle: 'italic',
+    marginBottom: 12,
+  },
+  cardActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  joinedDate: {
+    fontSize: 12,
+    color: colors.textSecondary,
+  },
+  actionButtons: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  actionButton: {
+    padding: 8,
+    borderRadius: 8,
+  },
+  editButton: {
+    backgroundColor: colors.primary + '20',
+  },
+  deleteButton: {
+    backgroundColor: colors.error + '20',
   },
 });
 
-export default ClientCard;
+export default function ClientCard({ 
+  client, 
+  taskStats, 
+  onPress, 
+  onEdit, 
+  onDelete 
+}: ClientCardProps) {
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(word => word.charAt(0))
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
+  const getProgressPercentage = () => {
+    if (taskStats.total === 0) return 0;
+    return (taskStats.completed / taskStats.total) * 100;
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      year: 'numeric',
+    });
+  };
+
+  return (
+    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.7}>
+      <View style={styles.cardHeader}>
+        <View style={styles.avatar}>
+          <Text style={styles.avatarText}>{getInitials(client.name)}</Text>
+        </View>
+        <View style={styles.clientInfo}>
+          <Text style={styles.clientName}>{client.name}</Text>
+          <Text style={styles.clientEmail}>{client.email}</Text>
+        </View>
+      </View>
+
+      <View style={styles.taskStats}>
+        <View style={styles.statItem}>
+          <Text style={[styles.statNumber, { color: colors.primary }]}>
+            {taskStats.total}
+          </Text>
+          <Text style={styles.statLabel}>Total</Text>
+        </View>
+        <View style={styles.statItem}>
+          <Text style={[styles.statNumber, { color: colors.warning }]}>
+            {taskStats.pending}
+          </Text>
+          <Text style={styles.statLabel}>Pending</Text>
+        </View>
+        <View style={styles.statItem}>
+          <Text style={[styles.statNumber, { color: colors.success }]}>
+            {taskStats.completed}
+          </Text>
+          <Text style={styles.statLabel}>Completed</Text>
+        </View>
+        <View style={styles.statItem}>
+          <Text style={[styles.statNumber, { color: colors.info }]}>
+            {Math.round(getProgressPercentage())}%
+          </Text>
+          <Text style={styles.statLabel}>Progress</Text>
+        </View>
+      </View>
+
+      {taskStats.total > 0 && (
+        <View style={styles.progressBar}>
+          <View 
+            style={[
+              styles.progressFill, 
+              { width: `${getProgressPercentage()}%` }
+            ]} 
+          />
+        </View>
+      )}
+
+      {client.therapistNotes && (
+        <Text style={styles.therapistNotes} numberOfLines={2}>
+          "{client.therapistNotes}"
+        </Text>
+      )}
+
+      <View style={styles.cardActions}>
+        <Text style={styles.joinedDate}>
+          Joined {formatDate(client.createdAt)}
+        </Text>
+        
+        {(onEdit || onDelete) && (
+          <View style={styles.actionButtons}>
+            {onEdit && (
+              <TouchableOpacity
+                style={[styles.actionButton, styles.editButton]}
+                onPress={(e) => {
+                  e.stopPropagation();
+                  onEdit();
+                }}
+              >
+                <Icon name="edit" size={16} color={colors.primary} />
+              </TouchableOpacity>
+            )}
+            {onDelete && (
+              <TouchableOpacity
+                style={[styles.actionButton, styles.deleteButton]}
+                onPress={(e) => {
+                  e.stopPropagation();
+                  onDelete();
+                }}
+              >
+                <Icon name="trash" size={16} color={colors.error} />
+              </TouchableOpacity>
+            )}
+          </View>
+        )}
+      </View>
+    </TouchableOpacity>
+  );
+}

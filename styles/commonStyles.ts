@@ -1,139 +1,204 @@
 
-import { StyleSheet, ViewStyle, TextStyle } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 export const colors = {
-  primary: '#87CEEB',      // Light blue (sky blue)
-  secondary: '#4682B4',    // Steel blue
-  accent: '#90EE90',       // Light green (calming)
-  background: '#F8F9FA',   // Very light gray/white
-  backgroundAlt: '#FFFFFF', // Pure white
-  text: '#2C3E50',         // Dark gray
-  textLight: '#6C757D',    // Medium gray
-  success: '#28A745',      // Green
-  warning: '#FFC107',      // Yellow
-  danger: '#DC3545',       // Red
-  border: '#E9ECEF',       // Light border
-  card: '#FFFFFF',         // White cards
-  shadow: 'rgba(0, 0, 0, 0.1)',
+  // Primary brand colors
+  primary: '#5d554f',
+  secondary: '#8B7355',
+  
+  // Background colors
+  background: '#e7ddc3',
+  surface: '#f5f1e8',
+  
+  // Text colors
+  text: '#2c2c2c',
+  textSecondary: '#666666',
+  
+  // UI colors
+  border: '#d4c4a8',
+  
+  // Status colors
+  success: '#4CAF50',
+  warning: '#FF9800',
+  error: '#F44336',
+  info: '#2196F3',
+  
+  // Additional colors for task types
+  video: '#9C27B0',
+  exercise: '#4CAF50',
+  reading: '#FF9800',
+  reflection: '#2196F3',
+  photoSubmission: '#E91E63',
+  document: '#F44336',
 };
 
-export const buttonStyles = StyleSheet.create({
-  primary: {
-    backgroundColor: colors.primary,
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  secondary: {
-    backgroundColor: colors.secondary,
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  accent: {
-    backgroundColor: colors.accent,
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  outline: {
-    backgroundColor: 'transparent',
-    borderWidth: 2,
-    borderColor: colors.primary,
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
-
 export const commonStyles = StyleSheet.create({
-  wrapper: {
-    backgroundColor: colors.background,
-    width: '100%',
-    height: '100%',
-  },
   container: {
     flex: 1,
     backgroundColor: colors.background,
-    width: '100%',
-    height: '100%',
   },
-  content: {
+  safeArea: {
     flex: 1,
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 80, // Add padding to account for tab bar
+    backgroundColor: colors.background,
   },
   centerContent: {
     flex: 1,
-    alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 20,
-    paddingBottom: 80, // Add padding to account for tab bar
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: colors.text,
-    marginBottom: 8,
-    textAlign: 'center',
-  },
-  subtitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: colors.text,
-    marginBottom: 16,
-  },
-  text: {
-    fontSize: 16,
-    fontWeight: '400',
-    color: colors.text,
-    lineHeight: 24,
-  },
-  textLight: {
-    fontSize: 14,
-    fontWeight: '400',
-    color: colors.textLight,
-    lineHeight: 20,
+    alignItems: 'center',
+    padding: 20,
   },
   card: {
-    backgroundColor: colors.card,
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
     marginVertical: 8,
-    boxShadow: `0px 2px 8px ${colors.shadow}`,
+    marginHorizontal: 20,
+    borderWidth: 1,
+    borderColor: colors.border,
+    shadowColor: colors.text,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
     elevation: 3,
   },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: colors.text,
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: colors.text,
+    marginBottom: 4,
+  },
+  body: {
+    fontSize: 16,
+    color: colors.text,
+    lineHeight: 24,
+  },
+  caption: {
+    fontSize: 14,
+    color: colors.textSecondary,
+    lineHeight: 20,
+  },
   input: {
-    backgroundColor: colors.backgroundAlt,
     borderWidth: 1,
     borderColor: colors.border,
     borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    padding: 12,
     fontSize: 16,
     color: colors.text,
-    marginVertical: 8,
+    backgroundColor: colors.surface,
   },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  section: {
-    marginVertical: 16,
+  inputFocused: {
+    borderColor: colors.primary,
   },
   divider: {
     height: 1,
     backgroundColor: colors.border,
     marginVertical: 16,
+  },
+  shadow: {
+    shadowColor: colors.text,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+});
+
+export const buttonStyles = StyleSheet.create({
+  primary: {
+    backgroundColor: colors.primary,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  primaryText: {
+    color: colors.surface,
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  secondary: {
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: colors.primary,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  secondaryText: {
+    color: colors.primary,
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  outline: {
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: colors.border,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  outlineText: {
+    color: colors.text,
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  ghost: {
+    backgroundColor: 'transparent',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  ghostText: {
+    color: colors.primary,
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  small: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+  },
+  smallText: {
+    fontSize: 14,
+  },
+  large: {
+    paddingVertical: 16,
+    paddingHorizontal: 32,
+  },
+  largeText: {
+    fontSize: 18,
+  },
+  disabled: {
+    opacity: 0.5,
+  },
+  success: {
+    backgroundColor: colors.success,
+  },
+  warning: {
+    backgroundColor: colors.warning,
+  },
+  error: {
+    backgroundColor: colors.error,
+  },
+  info: {
+    backgroundColor: colors.info,
   },
 });

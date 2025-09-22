@@ -1,12 +1,10 @@
 
+import React from 'react';
 import { Tabs } from 'expo-router';
-import { colors } from '../../styles/commonStyles';
 import Icon from '../../components/Icon';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { colors } from '../../styles/commonStyles';
 
 export default function AdminLayout() {
-  const insets = useSafeAreaInsets();
-  
   return (
     <Tabs
       screenOptions={{
@@ -14,24 +12,16 @@ export default function AdminLayout() {
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.text,
         tabBarStyle: {
-          backgroundColor: colors.backgroundAlt,
+          backgroundColor: colors.surface,
           borderTopColor: colors.border,
-          borderTopWidth: 1,
-          paddingBottom: Math.max(insets.bottom, 8),
+          paddingBottom: 8,
           paddingTop: 8,
-          height: 60 + Math.max(insets.bottom, 8),
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: 0,
+          height: 80,
         },
         tabBarLabelStyle: {
           fontSize: 12,
           fontWeight: '600',
-          marginBottom: 2,
-        },
-        tabBarIconStyle: {
-          marginTop: 2,
+          marginTop: 4,
         },
       }}
     >
@@ -40,7 +30,7 @@ export default function AdminLayout() {
         options={{
           title: 'Clients',
           tabBarIcon: ({ color, size }) => (
-            <Icon name="people-outline" size={size} color={color} />
+            <Icon name="users" size={size} color={color} />
           ),
         }}
       />
@@ -49,7 +39,34 @@ export default function AdminLayout() {
         options={{
           title: 'Tasks',
           tabBarIcon: ({ color, size }) => (
-            <Icon name="list-outline" size={size} color={color} />
+            <Icon name="clipboard" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="videos"
+        options={{
+          title: 'Videos',
+          tabBarIcon: ({ color, size }) => (
+            <Icon name="video" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="exercises"
+        options={{
+          title: 'Exercises',
+          tabBarIcon: ({ color, size }) => (
+            <Icon name="activity" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="documents"
+        options={{
+          title: 'Documents',
+          tabBarIcon: ({ color, size }) => (
+            <Icon name="file-text" size={size} color={color} />
           ),
         }}
       />
@@ -58,7 +75,7 @@ export default function AdminLayout() {
         options={{
           title: 'Analytics',
           tabBarIcon: ({ color, size }) => (
-            <Icon name="analytics-outline" size={size} color={color} />
+            <Icon name="bar-chart" size={size} color={color} />
           ),
         }}
       />
@@ -67,7 +84,7 @@ export default function AdminLayout() {
         options={{
           title: 'Profile',
           tabBarIcon: ({ color, size }) => (
-            <Icon name="person-outline" size={size} color={color} />
+            <Icon name="user" size={size} color={color} />
           ),
         }}
       />

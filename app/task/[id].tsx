@@ -1,206 +1,20 @@
 
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Alert, Image, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
-import { colors, commonStyles, buttonStyles } from '../../styles/commonStyles';
-import { mockTasks } from '../../data/mockData';
-import { Task } from '../../types';
 import Icon from '../../components/Icon';
-
-export default function TaskDetailScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
-  const [task, setTask] = useState<Task | null>(null);
-
-  useEffect(() => {
-    const foundTask = mockTasks.find(t => t.id === id);
-    if (foundTask) {
-      setTask(foundTask);
-    } else {
-      Alert.alert('Error', 'Task not found', [
-        { text: 'OK', onPress: () => router.back() }
-      ]);
-    }
-  }, [id]);
-
-  const handleToggleComplete = () => {
-    if (!task) return;
-    
-    setTask(prev => prev ? { ...prev, completed: !prev.completed } : null);
-    
-    Alert.alert(
-      'Success',
-      task.completed ? 'Task marked as incomplete' : 'Task completed! Great job!',
-      [{ text: 'OK' }]
-    );
-  };
-
-  const getTaskIcon = (type: Task['type']) => {
-    switch (type) {
-      case 'video':
-        return 'play-circle-outline';
-      case 'exercise':
-        return 'fitness-outline';
-      case 'reading':
-        return 'book-outline';
-      case 'reflection':
-        return 'journal-outline';
-      default:
-        return 'document-outline';
-    }
-  };
-
-  const getTaskTypeColor = (type: Task['type']) => {
-    switch (type) {
-      case 'video':
-        return colors.danger;
-      case 'exercise':
-        return colors.accent;
-      case 'reading':
-        return colors.primary;
-      case 'reflection':
-        return colors.secondary;
-      default:
-        return colors.textLight;
-    }
-  };
-
-  if (!task) {
-    return (
-      <SafeAreaView style={commonStyles.centerContent}>
-        <Text style={commonStyles.title}>Loading...</Text>
-      </SafeAreaView>
-    );
-  }
-
-  return (
-    <SafeAreaView style={commonStyles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => router.back()}
-        >
-          <Icon name="arrow-back" size={24} color={colors.text} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Task Details</Text>
-        <View style={styles.headerSpacer} />
-      </View>
-
-      <ScrollView style={commonStyles.content} showsVerticalScrollIndicator={false}>
-        {/* Task Header */}
-        <View style={styles.taskHeader}>
-          <View style={styles.taskIconContainer}>
-            <Icon 
-              name={getTaskIcon(task.type)} 
-              size={48} 
-              color={getTaskTypeColor(task.type)} 
-            />
-          </View>
-          <Text style={styles.taskTitle}>{task.title}</Text>
-          <View style={styles.taskTypeContainer}>
-            <Text style={[styles.taskType, { color: getTaskTypeColor(task.type) }]}>
-              {task.type.toUpperCase()}
-            </Text>
-          </View>
-        </View>
-
-        {/* Task Status */}
-        <View style={styles.statusCard}>
-          <View style={styles.statusHeader}>
-            <Icon 
-              name={task.completed ? 'checkmark-circle' : 'time-outline'} 
-              size={24} 
-              color={task.completed ? colors.success : colors.warning} 
-            />
-            <Text style={[
-              styles.statusText,
-              { color: task.completed ? colors.success : colors.warning }
-            ]}>
-              {task.completed ? 'Completed' : 'In Progress'}
-            </Text>
-          </View>
-          
-          {task.duration && (
-            <View style={styles.durationContainer}>
-              <Icon name="time-outline" size={16} color={colors.textLight} />
-              <Text style={styles.durationText}>
-                Estimated time: {task.duration} minutes
-              </Text>
-            </View>
-          )}
-          
-          {task.dueDate && (
-            <View style={styles.dueDateContainer}>
-              <Icon name="calendar-outline" size={16} color={colors.textLight} />
-              <Text style={styles.dueDateText}>
-                Due: {new Date(task.dueDate).toLocaleDateString()}
-              </Text>
-            </View>
-          )}
-        </View>
-
-        {/* Task Description */}
-        <View style={styles.descriptionCard}>
-          <Text style={styles.sectionTitle}>Description</Text>
-          <Text style={styles.descriptionText}>{task.description}</Text>
-        </View>
-
-        {/* Task Content/Instructions */}
-        <View style={styles.contentCard}>
-          <Text style={styles.sectionTitle}>
-            {task.type === 'video' ? 'Video Content' : 
-             task.type === 'exercise' ? 'Exercise Instructions' :
-             task.type === 'reading' ? 'Reading Material' :
-             'Reflection Prompts'}
-          </Text>
-          <Text style={styles.contentText}>{task.content}</Text>
-        </View>
-
-        {/* Action Buttons */}
-        <View style={styles.actionButtons}>
-          {task.type === 'video' && (
-            <TouchableOpacity style={[buttonStyles.secondary, styles.actionButton]}>
-              <Icon name="play" size={20} color={colors.backgroundAlt} />
-              <Text style={styles.actionButtonText}>Watch Video</Text>
-            </TouchableOpacity>
-          )}
-          
-          <TouchableOpacity 
-            style={[
-              task.completed ? buttonStyles.outline : buttonStyles.primary,
-              styles.actionButton
-            ]}
-            onPress={handleToggleComplete}
-          >
-            <Icon 
-              name={task.completed ? 'refresh' : 'checkmark'} 
-              size={20} 
-              color={task.completed ? colors.primary : colors.backgroundAlt} 
-            />
-            <Text style={[
-              styles.actionButtonText,
-              task.completed && { color: colors.primary }
-            ]}>
-              {task.completed ? 'Mark Incomplete' : 'Mark Complete'}
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Progress Notes (if completed) */}
-        {task.completed && (
-          <View style={styles.notesCard}>
-            <Text style={styles.sectionTitle}>Progress Notes</Text>
-            <Text style={styles.notesText}>
-              Great job completing this task! Your progress is being tracked and will be reviewed in your next session.
-            </Text>
-          </View>
-        )}
-      </ScrollView>
-    </SafeAreaView>
-  );
-}
+import { colors, commonStyles, buttonStyles } from '../../styles/commonStyles';
+import { Task, PhotoSubmission } from '../../types';
+import { supabase } from '../integrations/supabase/client';
+import * as ImagePicker from 'expo-image-picker';
+import { useAuth } from '../../hooks/useAuth';
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -208,144 +22,645 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
-    backgroundColor: colors.backgroundAlt,
   },
   backButton: {
+    marginRight: 16,
     padding: 8,
-    marginRight: 8,
+    borderRadius: 8,
+    backgroundColor: colors.surface,
   },
   headerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: 20,
+    fontWeight: 'bold',
     color: colors.text,
     flex: 1,
-    textAlign: 'center',
   },
-  headerSpacer: {
-    width: 40,
+  content: {
+    padding: 20,
   },
   taskHeader: {
-    alignItems: 'center',
-    paddingVertical: 24,
-  },
-  taskIconContainer: {
-    marginBottom: 16,
+    marginBottom: 24,
   },
   taskTitle: {
-    fontSize: 24,
-    fontWeight: '700',
+    fontSize: 28,
+    fontWeight: 'bold',
     color: colors.text,
-    textAlign: 'center',
     marginBottom: 8,
-  },
-  taskTypeContainer: {
-    backgroundColor: colors.border,
-    borderRadius: 16,
-    paddingHorizontal: 12,
-    paddingVertical: 4,
   },
   taskType: {
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  statusCard: {
-    backgroundColor: colors.card,
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-    boxShadow: `0px 2px 8px ${colors.shadow}`,
-    elevation: 3,
-  },
-  statusHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: 16,
   },
-  statusText: {
+  taskTypeIcon: {
+    marginRight: 8,
+  },
+  taskTypeText: {
     fontSize: 16,
     fontWeight: '600',
-    marginLeft: 8,
+    color: colors.primary,
   },
-  durationContainer: {
+  taskMeta: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
+    flexWrap: 'wrap',
+    gap: 16,
+    marginBottom: 16,
   },
-  durationText: {
-    fontSize: 14,
-    color: colors.textLight,
-    marginLeft: 8,
-  },
-  dueDateContainer: {
+  metaItem: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  dueDateText: {
+  metaText: {
     fontSize: 14,
-    color: colors.textLight,
-    marginLeft: 8,
+    color: colors.textSecondary,
+    marginLeft: 6,
   },
-  descriptionCard: {
-    backgroundColor: colors.card,
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-    boxShadow: `0px 2px 8px ${colors.shadow}`,
-    elevation: 3,
+  description: {
+    fontSize: 16,
+    color: colors.text,
+    lineHeight: 24,
+    marginBottom: 24,
   },
-  contentCard: {
-    backgroundColor: colors.card,
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-    boxShadow: `0px 2px 8px ${colors.shadow}`,
-    elevation: 3,
+  section: {
+    marginBottom: 24,
   },
   sectionTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: colors.text,
+    marginBottom: 12,
+  },
+  instructionsList: {
+    backgroundColor: colors.surface,
+    borderRadius: 12,
+    padding: 16,
+  },
+  instructionItem: {
+    flexDirection: 'row',
+    marginBottom: 12,
+  },
+  instructionNumber: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: colors.primary,
+    marginRight: 12,
+    minWidth: 24,
+  },
+  instructionText: {
+    fontSize: 16,
+    color: colors.text,
+    flex: 1,
+    lineHeight: 22,
+  },
+  videoContainer: {
+    backgroundColor: colors.surface,
+    borderRadius: 12,
+    padding: 16,
+    alignItems: 'center',
+  },
+  videoThumbnail: {
+    width: '100%',
+    height: 200,
+    borderRadius: 8,
+    marginBottom: 12,
+  },
+  videoButton: {
+    backgroundColor: colors.primary,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  videoButtonText: {
+    color: colors.surface,
     fontSize: 16,
     fontWeight: '600',
-    color: colors.text,
-    marginBottom: 8,
+    marginLeft: 8,
   },
-  descriptionText: {
-    fontSize: 16,
-    color: colors.text,
-    lineHeight: 24,
+  photoSubmissionSection: {
+    backgroundColor: colors.surface,
+    borderRadius: 12,
+    padding: 16,
   },
-  contentText: {
-    fontSize: 16,
-    color: colors.text,
-    lineHeight: 24,
-  },
-  actionButtons: {
-    gap: 12,
-    marginBottom: 16,
-  },
-  actionButton: {
+  photoButton: {
+    backgroundColor: colors.primary,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 8,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
+    marginBottom: 16,
   },
-  actionButtonText: {
+  photoButtonText: {
+    color: colors.surface,
     fontSize: 16,
     fontWeight: '600',
-    color: colors.backgroundAlt,
+    marginLeft: 8,
   },
-  notesCard: {
-    backgroundColor: colors.card,
-    borderRadius: 12,
-    padding: 16,
+  submittedPhoto: {
+    width: '100%',
+    height: 200,
+    borderRadius: 8,
+    marginBottom: 12,
+  },
+  notesInput: {
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: 8,
+    padding: 12,
+    fontSize: 16,
+    color: colors.text,
+    backgroundColor: colors.background,
+    textAlignVertical: 'top',
+    height: 80,
     marginBottom: 16,
-    borderLeftWidth: 4,
-    borderLeftColor: colors.success,
-    boxShadow: `0px 2px 8px ${colors.shadow}`,
-    elevation: 3,
   },
-  notesText: {
-    fontSize: 14,
-    color: colors.textLight,
-    lineHeight: 20,
-    fontStyle: 'italic',
+  submitButton: {
+    backgroundColor: colors.success,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  submitButtonText: {
+    color: colors.surface,
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  completeButton: {
+    backgroundColor: colors.success,
+    paddingHorizontal: 24,
+    paddingVertical: 16,
+    borderRadius: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 24,
+  },
+  completeButtonCompleted: {
+    backgroundColor: colors.textSecondary,
+  },
+  completeButtonText: {
+    color: colors.surface,
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginLeft: 8,
+  },
+  documentButton: {
+    backgroundColor: colors.primary,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  documentButtonText: {
+    color: colors.surface,
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: 8,
   },
 });
+
+export default function TaskDetailScreen() {
+  const { id } = useLocalSearchParams();
+  const { user } = useAuth();
+  const [task, setTask] = useState<Task | null>(null);
+  const [photoSubmission, setPhotoSubmission] = useState<PhotoSubmission | null>(null);
+  const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
+  const [notes, setNotes] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (id) {
+      fetchTask();
+    }
+  }, [id]);
+
+  const fetchTask = async () => {
+    try {
+      const { data: taskData, error: taskError } = await supabase
+        .from('tasks')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (taskError) throw taskError;
+      setTask(taskData);
+
+      // If it's a photo submission task, check for existing submission
+      if (taskData.type === 'photo_submission') {
+        const { data: submissionData, error: submissionError } = await supabase
+          .from('photo_submissions')
+          .select('*')
+          .eq('task_id', id)
+          .eq('client_id', user?.id)
+          .single();
+
+        if (submissionData) {
+          setPhotoSubmission(submissionData);
+          setNotes(submissionData.notes || '');
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching task:', error);
+      Alert.alert('Error', 'Failed to load task details');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleToggleComplete = async () => {
+    if (!task) return;
+
+    try {
+      const { error } = await supabase
+        .from('tasks')
+        .update({ completed: !task.completed })
+        .eq('id', task.id);
+
+      if (error) throw error;
+
+      setTask({ ...task, completed: !task.completed });
+      Alert.alert('Success', task.completed ? 'Task marked as incomplete' : 'Task completed!');
+    } catch (error) {
+      console.error('Error updating task:', error);
+      Alert.alert('Error', 'Failed to update task');
+    }
+  };
+
+  const pickImage = async () => {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 0.8,
+      });
+
+      if (!result.canceled && result.assets[0]) {
+        setSelectedPhoto(result.assets[0].uri);
+      }
+    } catch (error) {
+      console.error('Error picking image:', error);
+      Alert.alert('Error', 'Failed to pick image');
+    }
+  };
+
+  const uploadPhoto = async (uri: string) => {
+    try {
+      const response = await fetch(uri);
+      const blob = await response.blob();
+      
+      const fileExt = uri.split('.').pop();
+      const fileName = `${Date.now()}.${fileExt}`;
+      const filePath = `photo-submissions/${fileName}`;
+
+      const { data, error } = await supabase.storage
+        .from('photo-submissions')
+        .upload(filePath, blob);
+
+      if (error) throw error;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('photo-submissions')
+        .getPublicUrl(filePath);
+
+      return publicUrl;
+    } catch (error) {
+      console.error('Error uploading photo:', error);
+      throw error;
+    }
+  };
+
+  const submitPhoto = async () => {
+    if (!selectedPhoto || !task || !user) return;
+
+    try {
+      const photoUrl = await uploadPhoto(selectedPhoto);
+
+      const submissionData = {
+        task_id: task.id,
+        client_id: user.id,
+        photo_url: photoUrl,
+        notes: notes.trim(),
+      };
+
+      if (photoSubmission) {
+        const { error } = await supabase
+          .from('photo_submissions')
+          .update(submissionData)
+          .eq('id', photoSubmission.id);
+
+        if (error) throw error;
+      } else {
+        const { data, error } = await supabase
+          .from('photo_submissions')
+          .insert([submissionData])
+          .select()
+          .single();
+
+        if (error) throw error;
+        setPhotoSubmission(data);
+      }
+
+      setSelectedPhoto(null);
+      Alert.alert('Success', 'Photo submitted successfully!');
+      fetchTask(); // Refresh to get updated submission
+    } catch (error) {
+      console.error('Error submitting photo:', error);
+      Alert.alert('Error', 'Failed to submit photo');
+    }
+  };
+
+  const getTaskIcon = (type: Task['type']) => {
+    switch (type) {
+      case 'video':
+        return 'video';
+      case 'exercise':
+        return 'activity';
+      case 'reading':
+        return 'book';
+      case 'reflection':
+        return 'edit';
+      case 'photo_submission':
+        return 'camera';
+      case 'document':
+        return 'file-text';
+      default:
+        return 'clipboard';
+    }
+  };
+
+  const getTaskTypeColor = (type: Task['type']) => {
+    switch (type) {
+      case 'video':
+        return colors.primary;
+      case 'exercise':
+        return colors.success;
+      case 'reading':
+        return colors.warning;
+      case 'reflection':
+        return colors.info;
+      case 'photo_submission':
+        return colors.secondary;
+      case 'document':
+        return colors.error;
+      default:
+        return colors.textSecondary;
+    }
+  };
+
+  const getTaskTypeLabel = (type: Task['type']) => {
+    switch (type) {
+      case 'video':
+        return 'Meditation Video';
+      case 'exercise':
+        return 'Physical Exercise';
+      case 'reading':
+        return 'Reading Material';
+      case 'reflection':
+        return 'Reflection Exercise';
+      case 'photo_submission':
+        return 'Photo Submission';
+      case 'document':
+        return 'Document';
+      default:
+        return 'Task';
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  };
+
+  const extractYouTubeId = (url: string) => {
+    const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/);
+    return match ? match[1] : null;
+  };
+
+  const getThumbnailUrl = (youtubeUrl: string) => {
+    const videoId = extractYouTubeId(youtubeUrl);
+    return videoId ? `https://img.youtube.com/vi/${videoId}/mqdefault.jpg` : null;
+  };
+
+  const renderTaskContent = () => {
+    if (!task) return null;
+
+    switch (task.type) {
+      case 'video':
+        const thumbnailUrl = getThumbnailUrl(task.content);
+        return (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Watch Video</Text>
+            <View style={styles.videoContainer}>
+              {thumbnailUrl && (
+                <Image source={{ uri: thumbnailUrl }} style={styles.videoThumbnail} />
+              )}
+              <TouchableOpacity 
+                style={styles.videoButton}
+                onPress={() => {
+                  // Open YouTube video
+                  console.log('Opening video:', task.content);
+                }}
+              >
+                <Icon name="play" size={20} color={colors.surface} />
+                <Text style={styles.videoButtonText}>Watch on YouTube</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        );
+
+      case 'exercise':
+        const instructions = task.content.split('\n').filter(line => line.trim());
+        return (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Exercise Instructions</Text>
+            <View style={styles.instructionsList}>
+              {instructions.map((instruction, index) => (
+                <View key={index} style={styles.instructionItem}>
+                  <Text style={styles.instructionNumber}>{index + 1}.</Text>
+                  <Text style={styles.instructionText}>{instruction}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+        );
+
+      case 'photo_submission':
+        return (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Photo Submission</Text>
+            <View style={styles.photoSubmissionSection}>
+              {photoSubmission?.photoUrl ? (
+                <>
+                  <Image source={{ uri: photoSubmission.photoUrl }} style={styles.submittedPhoto} />
+                  <Text style={{ color: colors.success, textAlign: 'center', marginBottom: 16 }}>
+                    Photo submitted successfully!
+                  </Text>
+                </>
+              ) : selectedPhoto ? (
+                <>
+                  <Image source={{ uri: selectedPhoto }} style={styles.submittedPhoto} />
+                  <TextInput
+                    style={styles.notesInput}
+                    placeholder="Add notes about your photo (optional)"
+                    placeholderTextColor={colors.textSecondary}
+                    value={notes}
+                    onChangeText={setNotes}
+                    multiline
+                  />
+                  <TouchableOpacity style={styles.submitButton} onPress={submitPhoto}>
+                    <Text style={styles.submitButtonText}>Submit Photo</Text>
+                  </TouchableOpacity>
+                </>
+              ) : (
+                <TouchableOpacity style={styles.photoButton} onPress={pickImage}>
+                  <Icon name="camera" size={20} color={colors.surface} />
+                  <Text style={styles.photoButtonText}>Take or Select Photo</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          </View>
+        );
+
+      case 'document':
+        return (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Document</Text>
+            <TouchableOpacity 
+              style={styles.documentButton}
+              onPress={() => {
+                // Open document
+                console.log('Opening document:', task.content);
+              }}
+            >
+              <Icon name="file-text" size={20} color={colors.surface} />
+              <Text style={styles.documentButtonText}>Open Document</Text>
+            </TouchableOpacity>
+          </View>
+        );
+
+      case 'reading':
+      case 'reflection':
+      default:
+        return (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>
+              {task.type === 'reflection' ? 'Reflection Prompts' : 'Instructions'}
+            </Text>
+            <Text style={styles.description}>{task.content}</Text>
+          </View>
+        );
+    }
+  };
+
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+          <Text>Loading task details...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (!task) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+          <Text>Task not found</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+          <Icon name="arrow-left" size={24} color={colors.text} />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Task Details</Text>
+      </View>
+
+      <ScrollView style={{ flex: 1 }}>
+        <View style={styles.content}>
+          <View style={styles.taskHeader}>
+            <Text style={styles.taskTitle}>{task.title}</Text>
+            
+            <View style={styles.taskType}>
+              <View style={styles.taskTypeIcon}>
+                <Icon 
+                  name={getTaskIcon(task.type)} 
+                  size={20} 
+                  color={getTaskTypeColor(task.type)} 
+                />
+              </View>
+              <Text style={[styles.taskTypeText, { color: getTaskTypeColor(task.type) }]}>
+                {getTaskTypeLabel(task.type)}
+              </Text>
+            </View>
+
+            <View style={styles.taskMeta}>
+              {task.duration && (
+                <View style={styles.metaItem}>
+                  <Icon name="clock" size={16} color={colors.textSecondary} />
+                  <Text style={styles.metaText}>{task.duration} minutes</Text>
+                </View>
+              )}
+              
+              <View style={styles.metaItem}>
+                <Icon name="calendar" size={16} color={colors.textSecondary} />
+                <Text style={styles.metaText}>
+                  Assigned {formatDate(task.assignedDate)}
+                </Text>
+              </View>
+
+              {task.dueDate && (
+                <View style={styles.metaItem}>
+                  <Icon name="flag" size={16} color={colors.textSecondary} />
+                  <Text style={styles.metaText}>
+                    Due {formatDate(task.dueDate)}
+                  </Text>
+                </View>
+              )}
+            </View>
+          </View>
+
+          {task.description && (
+            <Text style={styles.description}>{task.description}</Text>
+          )}
+
+          {renderTaskContent()}
+
+          <TouchableOpacity
+            style={[
+              styles.completeButton,
+              task.completed && styles.completeButtonCompleted,
+            ]}
+            onPress={handleToggleComplete}
+          >
+            <Icon
+              name={task.completed ? "check-circle" : "circle"}
+              size={24}
+              color={colors.surface}
+            />
+            <Text style={styles.completeButtonText}>
+              {task.completed ? 'Completed' : 'Mark as Complete'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
