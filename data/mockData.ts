@@ -1,0 +1,163 @@
+
+import { Client, Task, Video, Exercise } from '../types';
+
+export const mockClients: Client[] = [
+  {
+    id: '1',
+    name: 'Sarah Johnson',
+    email: 'sarah.johnson@email.com',
+    role: 'client',
+    createdAt: '2024-01-15',
+    therapistNotes: 'Working on anxiety management and mindfulness techniques.',
+    assignedTasks: ['1', '2', '3'],
+  },
+  {
+    id: '2',
+    name: 'Michael Chen',
+    email: 'michael.chen@email.com',
+    role: 'client',
+    createdAt: '2024-01-20',
+    therapistNotes: 'Focus on stress reduction and work-life balance.',
+    assignedTasks: ['2', '4'],
+  },
+  {
+    id: '3',
+    name: 'Emma Williams',
+    email: 'emma.williams@email.com',
+    role: 'client',
+    createdAt: '2024-02-01',
+    therapistNotes: 'Building self-confidence and communication skills.',
+    assignedTasks: ['1', '3', '5'],
+  },
+];
+
+export const mockTasks: Task[] = [
+  {
+    id: '1',
+    title: 'Daily Mindfulness Practice',
+    description: 'Practice mindfulness meditation for 10 minutes each day',
+    type: 'exercise',
+    content: 'Find a quiet space, sit comfortably, and focus on your breathing for 10 minutes.',
+    duration: 10,
+    completed: false,
+    assignedDate: '2024-01-15',
+    dueDate: '2024-01-22',
+    clientId: '1',
+  },
+  {
+    id: '2',
+    title: 'Understanding Anxiety',
+    description: 'Watch this educational video about anxiety management',
+    type: 'video',
+    content: 'https://example.com/anxiety-video',
+    duration: 15,
+    completed: true,
+    assignedDate: '2024-01-16',
+    clientId: '1',
+  },
+  {
+    id: '3',
+    title: 'Gratitude Journal',
+    description: 'Write down 3 things you are grateful for each day',
+    type: 'reflection',
+    content: 'Each evening, reflect on your day and write down three things you are grateful for.',
+    completed: false,
+    assignedDate: '2024-01-17',
+    dueDate: '2024-01-24',
+    clientId: '1',
+  },
+  {
+    id: '4',
+    title: 'Progressive Muscle Relaxation',
+    description: 'Learn and practice progressive muscle relaxation technique',
+    type: 'exercise',
+    content: 'Tense and relax each muscle group in your body, starting from your toes.',
+    duration: 20,
+    completed: false,
+    assignedDate: '2024-01-20',
+    clientId: '2',
+  },
+  {
+    id: '5',
+    title: 'Communication Skills Video',
+    description: 'Watch video on effective communication techniques',
+    type: 'video',
+    content: 'https://example.com/communication-video',
+    duration: 25,
+    completed: false,
+    assignedDate: '2024-02-01',
+    clientId: '3',
+  },
+];
+
+export const mockVideos: Video[] = [
+  {
+    id: '1',
+    title: 'Understanding Anxiety',
+    description: 'Learn about anxiety symptoms and management techniques',
+    url: 'https://example.com/anxiety-video',
+    duration: 15,
+    thumbnail: 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?w=300&h=200&fit=crop',
+  },
+  {
+    id: '2',
+    title: 'Mindfulness Meditation',
+    description: 'Guided mindfulness meditation for beginners',
+    url: 'https://example.com/mindfulness-video',
+    duration: 20,
+    thumbnail: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=200&fit=crop',
+  },
+  {
+    id: '3',
+    title: 'Communication Skills',
+    description: 'Effective communication techniques for better relationships',
+    url: 'https://example.com/communication-video',
+    duration: 25,
+    thumbnail: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300&h=200&fit=crop',
+  },
+];
+
+export const mockExercises: Exercise[] = [
+  {
+    id: '1',
+    title: 'Daily Mindfulness Practice',
+    description: 'Practice mindfulness meditation for 10 minutes each day',
+    instructions: [
+      'Find a quiet, comfortable space',
+      'Sit with your back straight',
+      'Close your eyes or soften your gaze',
+      'Focus on your natural breathing',
+      'When your mind wanders, gently return to your breath',
+      'Continue for 10 minutes',
+    ],
+    estimatedTime: 10,
+  },
+  {
+    id: '2',
+    title: 'Progressive Muscle Relaxation',
+    description: 'Learn and practice progressive muscle relaxation technique',
+    instructions: [
+      'Lie down in a comfortable position',
+      'Start with your toes - tense for 5 seconds, then relax',
+      'Move to your calves - tense and relax',
+      'Continue with thighs, abdomen, arms, and face',
+      'Notice the difference between tension and relaxation',
+      'End with deep breathing',
+    ],
+    estimatedTime: 20,
+  },
+  {
+    id: '3',
+    title: 'Gratitude Journal',
+    description: 'Write down 3 things you are grateful for each day',
+    instructions: [
+      'Set aside 5-10 minutes each evening',
+      'Find a quiet space with your journal',
+      'Reflect on your day',
+      'Write down three specific things you are grateful for',
+      'Include why you are grateful for each item',
+      'Make this a daily habit',
+    ],
+    estimatedTime: 10,
+  },
+];
