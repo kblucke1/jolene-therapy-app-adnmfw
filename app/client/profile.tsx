@@ -5,10 +5,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { colors, commonStyles, buttonStyles } from '../../styles/commonStyles';
 import { useAuth } from '../../hooks/useAuth';
+import { useProfile } from '../../hooks/useProfile';
 import Icon from '../../components/Icon';
+import ImageUploader from '../../components/ImageUploader';
 
 export default function ClientProfileScreen() {
   const { user, logout } = useAuth();
+  const { profile, loading, uploading, pickImage } = useProfile();
 
   const handleLogout = () => {
     Alert.alert(
@@ -26,6 +29,10 @@ export default function ClientProfileScreen() {
         },
       ]
     );
+  };
+
+  const handleAvatarUpload = () => {
+    pickImage('avatar');
   };
 
   const profileSections = [
@@ -55,6 +62,16 @@ export default function ClientProfileScreen() {
     }
   ];
 
+  if (loading) {
+    return (
+      <SafeAreaView style={commonStyles.container}>
+        <View style={commonStyles.centerContent}>
+          <Text>Loading profile...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView style={commonStyles.container}>
       <ScrollView style={commonStyles.content} showsVerticalScrollIndicator={false}>
@@ -63,10 +80,20 @@ export default function ClientProfileScreen() {
         {/* User Info Card */}
         <View style={styles.userCard}>
           <View style={styles.avatarContainer}>
-            <Icon name="person-circle" size={80} color={colors.primary} />
+            <ImageUploader
+              imageUrl={profile?.avatar_url}
+              onPress={handleAvatarUpload}
+              loading={uploading}
+              type="avatar"
+              size={80}
+            />
           </View>
-          <Text style={styles.userName}>{user?.name || 'Client Name'}</Text>
-          <Text style={styles.userEmail}>{user?.email || 'client@email.com'}</Text>
+          <Text style={styles.userName}>
+            {profile?.name || user?.user_metadata?.name || 'Client Name'}
+          </Text>
+          <Text style={styles.userEmail}>
+            {profile?.email || user?.email || 'client@email.com'}
+          </Text>
           <View style={styles.userStats}>
             <View style={styles.statItem}>
               <Text style={styles.statNumber}>12</Text>

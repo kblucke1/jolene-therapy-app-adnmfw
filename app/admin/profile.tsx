@@ -5,10 +5,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { colors, commonStyles } from '../../styles/commonStyles';
 import { useAuth } from '../../hooks/useAuth';
+import { useProfile } from '../../hooks/useProfile';
 import Icon from '../../components/Icon';
+import ImageUploader from '../../components/ImageUploader';
 
 export default function AdminProfileScreen() {
   const { user, logout } = useAuth();
+  const { profile, loading, uploading, pickImage } = useProfile();
 
   const handleLogout = () => {
     Alert.alert(
@@ -26,6 +29,14 @@ export default function AdminProfileScreen() {
         },
       ]
     );
+  };
+
+  const handleLogoUpload = () => {
+    pickImage('logo');
+  };
+
+  const handleAvatarUpload = () => {
+    pickImage('avatar');
   };
 
   const profileSections = [
@@ -65,19 +76,56 @@ export default function AdminProfileScreen() {
     }
   ];
 
+  if (loading) {
+    return (
+      <SafeAreaView style={commonStyles.container}>
+        <View style={commonStyles.centerContent}>
+          <Text>Loading profile...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView style={commonStyles.container}>
       <ScrollView style={commonStyles.content} showsVerticalScrollIndicator={false}>
         <Text style={commonStyles.title}>Admin Profile</Text>
         
+        {/* Practice Logo Section */}
+        <View style={styles.logoSection}>
+          <Text style={styles.sectionTitle}>Practice Logo</Text>
+          <Text style={styles.sectionSubtitle}>
+            Upload your practice logo to personalize the app for your clients
+          </Text>
+          <View style={styles.logoUploadContainer}>
+            <ImageUploader
+              imageUrl={profile?.logo_url}
+              onPress={handleLogoUpload}
+              loading={uploading}
+              type="logo"
+              size={200}
+            />
+          </View>
+        </View>
+        
         {/* Admin Info Card */}
         <View style={styles.adminCard}>
           <View style={styles.avatarContainer}>
-            <Icon name="person-circle" size={80} color={colors.primary} />
+            <ImageUploader
+              imageUrl={profile?.avatar_url}
+              onPress={handleAvatarUpload}
+              loading={uploading}
+              type="avatar"
+              size={80}
+            />
           </View>
-          <Text style={styles.adminName}>{user?.name || 'Dr. Jolene Dawn'}</Text>
+          <Text style={styles.adminName}>
+            {profile?.name || user?.user_metadata?.name || 'Dr. Jolene Dawn'}
+          </Text>
           <Text style={styles.adminTitle}>Licensed Counselor</Text>
-          <Text style={styles.adminEmail}>{user?.email || 'admin@jolenedawn.com'}</Text>
+          <Text style={styles.adminEmail}>
+            {profile?.email || user?.email || 'admin@jolenedawn.com'}
+          </Text>
           
           <View style={styles.adminStats}>
             <View style={styles.statItem}>
@@ -164,7 +212,7 @@ export default function AdminProfileScreen() {
         {/* App Info */}
         <View style={styles.appInfo}>
           <Text style={styles.appInfoText}>
-            Jolene Dawn Counselling & Consulting
+            {profile?.practice_name || 'Jolene Dawn Counselling & Consulting'}
           </Text>
           <Text style={styles.appInfoText}>
             Admin Portal
@@ -177,6 +225,18 @@ export default function AdminProfileScreen() {
 }
 
 const styles = StyleSheet.create({
+  logoSection: {
+    backgroundColor: colors.card,
+    borderRadius: 12,
+    padding: 20,
+    marginBottom: 24,
+    boxShadow: `0px 2px 8px ${colors.shadow}`,
+    elevation: 3,
+  },
+  logoUploadContainer: {
+    alignItems: 'center',
+    marginTop: 16,
+  },
   adminCard: {
     backgroundColor: colors.card,
     borderRadius: 12,
@@ -266,6 +326,11 @@ const styles = StyleSheet.create({
     color: colors.text,
     marginBottom: 8,
     marginLeft: 4,
+  },
+  sectionSubtitle: {
+    fontSize: 14,
+    color: colors.textLight,
+    lineHeight: 20,
   },
   sectionCard: {
     backgroundColor: colors.card,
