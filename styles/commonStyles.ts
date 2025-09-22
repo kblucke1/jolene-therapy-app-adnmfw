@@ -70,12 +70,14 @@ export const commonStyles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
     paddingTop: 20,
+    paddingBottom: 80, // Add padding to account for tab bar
   },
   centerContent: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 20,
+    paddingBottom: 80, // Add padding to account for tab bar
   },
   title: {
     fontSize: 28,
